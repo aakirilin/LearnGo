@@ -1,0 +1,1 @@
+This is projekt for learn golang!
