@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Server/dto"
+	"Server/mock"
 	"net/http"
 	"strings"
 	"time"
@@ -9,11 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v5"
 )
-
-var testUsers = []dto.UserDTO{
-	{1, "admin@test.ru", "admin"},
-	{2, "user@test.ru", "user"},
-}
 
 var jwtKey = []byte("my_secret_key")
 var tokens []string
@@ -47,7 +43,7 @@ func (lc *LoginController) Login(c *gin.Context) {
 
 	var user dto.UserDTO
 	if c.BindJSON(&user) == nil {
-		for _, u := range testUsers {
+		for _, u := range mock.TestUsers {
 			if u.Email == user.Email && u.Password == user.Password {
 				token, _ := lc.generateJWT(u)
 				tokens = append(tokens, token)
