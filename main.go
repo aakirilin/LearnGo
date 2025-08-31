@@ -2,6 +2,7 @@ package main
 
 import (
 	controllers "Server/controllers"
+	sseSever "Server/sse"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +26,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func main() {
 	router := gin.Default()
+
 	taskController := new(controllers.TaskController)
 	loginController := new(controllers.LoginController)
 	userController := new(controllers.UserController)
@@ -40,8 +42,16 @@ func main() {
 
 	router.POST("/login", loginController.Login)
 	router.GET("/tasks", authM, taskController.GetAllTasks)
+	router.GET("/tasks/:id", authM, taskController.GetTask)
+
 	router.POST("/addtasks", authM, taskController.AddTasks)
 	router.GET("/getuser/:id", authM, userController.GetUser)
+
+	s := sseSever.SseServer
+
+	router.GET("/events/:channel", func(c *gin.Context) {
+		s.ServeHTTP(c.Writer, c.Request)
+	})
 
 	router.Run("localhost:8080")
 }
